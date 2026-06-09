@@ -1,0 +1,151 @@
+<body>
+
+<div id="inicio">
+
+    <video autoplay muted loop playsinline>
+        <source src="ghostface.mp4" type="video/mp4">
+    </video>
+
+    <div class="oscuro"></div>
+
+    <button id="btnEntrar">
+        ¿LISTOS?
+    </button>
+
+</div>
+
+<div id="principal">
+
+    <video autoplay muted loop playsinline>
+        <source src="ghostface.mp4" type="video/mp4">
+    </video>
+
+    <audio id="musica" loop>
+        <source src="geezy.mpeg" type="audio/mpeg">
+    </audio>
+
+    <div class="overlay"></div>
+
+    <div id="countdown">
+        00:00:00
+    </div>
+
+</div>
+
+<style>
+
+#inicio,
+#principal{
+    position:fixed;
+    inset:0;
+}
+
+#inicio{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#principal{
+    display:none;
+    justify-content:center;
+    align-items:center;
+}
+
+.oscuro,
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.6);
+}
+
+#inicio video,
+#principal video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:brightness(.30);
+}
+
+#btnEntrar{
+    z-index:10;
+    padding:18px 60px;
+    font-size:32px;
+    font-family:Arial, sans-serif;
+    font-weight:bold;
+    border:2px solid #fff;
+    background:rgba(0,0,0,.4);
+    color:white;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#btnEntrar:hover{
+    transform:scale(1.05);
+}
+
+#countdown{
+    z-index:10;
+    color:#d10000;
+    font-family:Arial, sans-serif;
+    font-size:min(15vw,180px);
+    font-weight:bold;
+    text-shadow:
+        0 0 10px rgba(209,0,0,.8),
+        0 0 30px rgba(209,0,0,.5);
+}
+
+</style>
+
+<script>
+
+document.getElementById("btnEntrar").onclick = () => {
+
+    document.getElementById("inicio").style.display = "none";
+
+    document.getElementById("principal").style.display = "flex";
+
+    document.getElementById("musica").play();
+
+};
+
+const objetivo = new Date("2026-06-09T00:00:00");
+
+function actualizar(){
+
+    const ahora = new Date();
+
+    const diferencia = objetivo - ahora;
+
+    if(diferencia <= 0){
+
+        document.getElementById("countdown").innerHTML = "00:00:00";
+
+        return;
+    }
+
+    const horas = Math.floor(diferencia / (1000*60*60));
+
+    const minutos = Math.floor(
+        (diferencia % (1000*60*60)) / (1000*60)
+    );
+
+    const segundos = Math.floor(
+        (diferencia % (1000*60)) / 1000
+    );
+
+    document.getElementById("countdown").innerHTML =
+        String(horas).padStart(2,"0") + ":" +
+        String(minutos).padStart(2,"0") + ":" +
+        String(segundos).padStart(2,"0");
+}
+
+setInterval(actualizar,1000);
+
+actualizar();
+
+</script>
+
+</body>
