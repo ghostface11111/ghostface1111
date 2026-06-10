@@ -1,38 +1,40 @@
-<body>
-
-<div id="inicio">
-
-    <video autoplay muted loop playsinline>
-        <source src="ghostface.mp4" type="video/mp4">
-    </video>
-
-    <div class="oscuro"></div>
-
-    <button id="btnEntrar">
-        ¿LISTOS?
-    </button>
-
-</div>
-
-<div id="principal">
-
-    <video autoplay muted loop playsinline>
-        <source src="ghostface.mp4" type="video/mp4">
-    </video>
-
-    <audio id="musica" loop>
-        <source src="geezy.mpeg" type="audio/mpeg">
-    </audio>
-
-    <div class="overlay"></div>
-
-    <div id="countdown">
-        00:00:00
-    </div>
-
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuenta Regresiva</title>
 
 <style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
+    background:black;
+}
+
+#videoFondo{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:brightness(.30);
+    z-index:-2;
+}
+
+.oscuro,
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.55);
+}
 
 #inicio,
 #principal{
@@ -52,33 +54,24 @@
     align-items:center;
 }
 
-.oscuro,
-.overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.6);
-}
-
-#inicio video,
-#principal video{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    filter:brightness(.30);
-}
-
 #btnEntrar{
+
     z-index:10;
-    padding:18px 60px;
-    font-size:32px;
-    font-family:Arial, sans-serif;
+
+    padding:20px 60px;
+
+    font-size:34px;
+
     font-weight:bold;
-    border:2px solid #fff;
-    background:rgba(0,0,0,.4);
+
     color:white;
+
+    background:rgba(0,0,0,.5);
+
+    border:2px solid white;
+
     cursor:pointer;
+
     transition:.3s;
 }
 
@@ -87,17 +80,72 @@
 }
 
 #countdown{
+
     z-index:10;
+
     color:#d10000;
-    font-family:Arial, sans-serif;
+
     font-size:min(15vw,180px);
+
     font-weight:bold;
+
     text-shadow:
-        0 0 10px rgba(209,0,0,.8),
-        0 0 30px rgba(209,0,0,.5);
+    0 0 10px rgba(209,0,0,.8),
+    0 0 25px rgba(209,0,0,.5);
+}
+
+#mensajeFinal{
+
+    display:none;
+
+    z-index:10;
+
+    color:#d10000;
+
+    font-size:min(9vw,90px);
+
+    font-weight:bold;
+
+    text-align:center;
+
+    text-shadow:
+    0 0 10px rgba(209,0,0,.8),
+    0 0 25px rgba(209,0,0,.5);
 }
 
 </style>
+</head>
+<body>
+
+<video id="videoFondo" autoplay muted loop playsinline>
+    <source src="ghostface.mp4" type="video/mp4">
+</video>
+
+<div id="inicio">
+
+    <div class="oscuro"></div>
+
+    <button id="btnEntrar">
+        ¿LISTOS?
+    </button>
+
+</div>
+
+<div id="principal">
+
+    <audio id="musica" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="overlay"></div>
+
+    <div id="countdown"></div>
+
+    <div id="mensajeFinal">
+        SE ACABÓ EL TIEMPO
+    </div>
+
+</div>
 
 <script>
 
@@ -111,9 +159,13 @@ document.getElementById("btnEntrar").onclick = () => {
 
 };
 
-const objetivo = new Date("2026-06-09T00:00:00");
+const objetivo = new Date("2026-06-10T00:00:00");
+
+let terminado = false;
 
 function actualizar(){
+
+    if(terminado) return;
 
     const ahora = new Date();
 
@@ -121,25 +173,49 @@ function actualizar(){
 
     if(diferencia <= 0){
 
-        document.getElementById("countdown").innerHTML = "00:00:00";
+        terminado = true;
+
+        document.getElementById("countdown").style.display = "none";
+
+        document.getElementById("mensajeFinal").style.display = "block";
+
+        setTimeout(() => {
+
+            document.body.innerHTML = `
+
+            <video autoplay controls playsinline
+            style="
+            position:fixed;
+            inset:0;
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            background:black;
+            ">
+                <source src="final.mp4" type="video/mp4">
+            </video>
+
+            `;
+
+        }, 4000);
 
         return;
     }
 
-    const horas = Math.floor(diferencia / (1000*60*60));
+    const horas = Math.floor(diferencia/(1000*60*60));
 
     const minutos = Math.floor(
-        (diferencia % (1000*60*60)) / (1000*60)
+    (diferencia%(1000*60*60))/(1000*60)
     );
 
     const segundos = Math.floor(
-        (diferencia % (1000*60)) / 1000
+    (diferencia%(1000*60))/1000
     );
 
     document.getElementById("countdown").innerHTML =
-        String(horas).padStart(2,"0") + ":" +
-        String(minutos).padStart(2,"0") + ":" +
-        String(segundos).padStart(2,"0");
+    String(horas).padStart(2,"0") + ":" +
+    String(minutos).padStart(2,"0") + ":" +
+    String(segundos).padStart(2,"0");
 }
 
 setInterval(actualizar,1000);
@@ -149,3 +225,4 @@ actualizar();
 </script>
 
 </body>
+</html>
